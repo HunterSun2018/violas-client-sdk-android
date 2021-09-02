@@ -8,4 +8,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "ViolasClient"
 include ':app'
-include ':violas-client-android-sdk'
+include ':violas-client-sdk-android'

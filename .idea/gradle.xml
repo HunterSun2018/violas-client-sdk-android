@@ -11,7 +11,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
-            <option value="$PROJECT_DIR$/violas-client-android-sdk" />
+            <option value="$PROJECT_DIR$/violas-client-sdk-android" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />
