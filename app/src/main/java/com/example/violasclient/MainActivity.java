@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.View;
 
 import androidx.navigation.NavController;
@@ -154,6 +155,8 @@ public class MainActivity extends AppCompatActivity {
             JsonRpc.Account childAccount = client.getAccount(childVASP.address);
             //Assert.assertNotNull(childAccount);
             System.out.println("Child VASP account:\n" + childAccount);
+
+            Log.i("Violas", "The child account address is " + childAccount.getAddress());
         } catch (StaleResponseException e) {
             // ignore stale response exception for submit.
             // submit probably succeed even hit a stale server.
