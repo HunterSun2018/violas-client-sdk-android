@@ -2,7 +2,7 @@
 
 ## usage
     1. copy violas-client-sdk-android.jar to [your app]/libs
-    2. add sdk.jar as library for your app
+    2. add violas-client-sdk-android.jar as library for your app
     3. add the following dependencies in build.gradle
 
         implementation 'com.google.code.gson:gson:2.8.6'
