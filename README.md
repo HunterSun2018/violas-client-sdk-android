@@ -1,7 +1,7 @@
 # violas-client-sdk-android-demo
 
 ## usage
-    1. copy sdk.jar to [your app]/libs
+    1. copy violas-client-sdk-android.jar to [your app]/libs
     2. add sdk.jar as library for your app
     3. add the following dependencies in build.gradle
 
