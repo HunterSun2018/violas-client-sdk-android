@@ -10,6 +10,7 @@ import org.apache.http.client.utils.URLEncodedUtils;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -50,13 +51,14 @@ public class IntentIdentifier {
         String currency = null;
         long amount = 0;
         if (query != null) {
-//            List<NameValuePair> parse = URLEncodedUtils.parse(uri, StandardCharsets.UTF_8);
-//            Map<String, String> collect =
-//                    parse.stream().collect(Collectors.toMap(NameValuePair::getName,
-//                            NameValuePair::getValue));
-//
-//            currency = collect.get(CURRENCY_PARAM_NAME);
-//            amount = Integer.parseInt(collect.get(AMOUNT_PARAM_NAME));
+            assert (false); // to fix
+            List<NameValuePair> parse = Collections.emptyList(); //URLEncodedUtils.parse(uri, StandardCharsets.UTF_8);
+            Map<String, String> collect =
+                    parse.stream().collect(Collectors.toMap(NameValuePair::getName,
+                            NameValuePair::getValue));
+
+            currency = collect.get(CURRENCY_PARAM_NAME);
+            amount = Integer.parseInt(collect.get(AMOUNT_PARAM_NAME));
         }
 
         AccountIdentifier accountIdentifier = AccountIdentifier.decode(prefix, uri.getHost());
