@@ -51,7 +51,7 @@ public class IntentIdentifier {
         String currency = null;
         long amount = 0;
         if (query != null) {
-            assert (false); // to fix
+            assert (false); // to be fixed
             List<NameValuePair> parse = Collections.emptyList(); //URLEncodedUtils.parse(uri, StandardCharsets.UTF_8);
             Map<String, String> collect =
                     parse.stream().collect(Collectors.toMap(NameValuePair::getName,

@@ -7,5 +7,6 @@ package com.diem.jsonrpc;
  * JSON-RPC methods
  */
 public enum Method {
-    get_metadata, get_account, get_account_transaction, submit, get_transactions, get_events, get_account_transactions, get_currencies
+    get_metadata, get_account, get_account_transaction, submit, get_transactions, get_events, get_account_transactions, get_currencies,
+    get_account_state_with_proof
 }

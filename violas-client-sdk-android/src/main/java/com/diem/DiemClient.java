@@ -51,4 +51,6 @@ public interface DiemClient {
     List<JsonRpc.Transaction> getTransactions(@Unsigned long fromVersion, int limit, boolean includeEvents) throws DiemException;
 
     List<JsonRpc.Event> getEvents(String events_key, @Unsigned long start, @Unsigned long limit) throws DiemException;
+
+    JsonRpc.AccountStateWithProof getAccountStateWithProof(String address, long version, long ledger_version) throws DiemException;
 }

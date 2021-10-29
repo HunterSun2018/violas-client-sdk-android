@@ -264,6 +264,17 @@ public class DiemJsonRpcClient implements DiemClient {
         return new Builder<JsonRpc.Event>().parseList(resp, JsonRpc.Event.newBuilder());
     }
 
+    @Override
+    public JsonRpc.AccountStateWithProof getAccountStateWithProof(String address, long version, long ledger_version) throws DiemException {
+        List<Object> params = new ArrayList<>();
+        params.add(address);
+        params.add(null);
+        params.add(null);
+
+        Response resp = call(Method.get_account_state_with_proof, params);
+        return new Builder<JsonRpc.AccountStateWithProof>().parse(resp, JsonRpc.AccountStateWithProof.newBuilder());
+    }
+
     private static class Builder<T extends MessageOrBuilder> {
 
         public static final JsonFormat.Parser PARSER = JsonFormat.parser().ignoringUnknownFields();
