@@ -3,10 +3,12 @@ package com.diem.types;
 import com.google.common.reflect.TypeToken;
 import com.novi.bcs.BcsDeserializer;
 import com.novi.serde.Bytes;
+import com.novi.serde.DeserializationError;
 import com.novi.serde.Deserializer;
 import com.novi.serde.Tuple2;
 
 import java.lang.reflect.InvocationTargetException;
+import java.security.InvalidParameterException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeMap;
@@ -22,8 +24,8 @@ public class AccountState {
         deserializer.increase_container_depth();
         AccountState.Builder builder = new AccountState.Builder();
 
-        TreeMap<byte[], byte[]> treeMap = new TreeMap<>((bytes1, bytes2) ->  {
-            if(bytes1 == bytes2)
+        TreeMap<byte[], byte[]> treeMap = new TreeMap<>((bytes1, bytes2) -> {
+            if (bytes1 == bytes2)
                 return 0;
 
             int length = bytes1.length;
@@ -35,11 +37,11 @@ public class AccountState {
             int len = Math.min(bytes1.length, bytes2.length);
 
             for (int i = 0; i < len; i++) {
-                if(bytes1[i] != bytes2[i])
+                if (bytes1[i] != bytes2[i])
                     return bytes1[i] - bytes2[i];
             }
 
-            return  0;
+            return 0;
         });
 
         Bytes bytes = deserializer.deserialize_bytes();
@@ -54,6 +56,8 @@ public class AccountState {
         }
 
         deserializer.decrease_container_depth();
+
+        builder.value = treeMap;
         return builder.build();
     }
 
@@ -79,8 +83,22 @@ public class AccountState {
         }
     }
 
-    public <T extends Object> T getResource(byte[] key, Class<T> object) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException v{
+    public interface BcsObject {
+        public void bcsDeserialize(byte[] input) throws com.novi.serde.DeserializationError;
+    }
 
-        return object.getDeclaredConstructor().newInstance();
+    public <T extends BcsObject> T getResource(byte[] path, Class<T> object)
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, DeserializationError {
+
+        byte[] value = mTree.get(path);
+        if(value == null)
+            throw new InvalidParameterException("The parameter path cannot be found.");
+
+        T t =  object.getDeclaredConstructor().newInstance();
+
+        t.bcsDeserialize(value);
+
+        return t;
+
     }
 }
