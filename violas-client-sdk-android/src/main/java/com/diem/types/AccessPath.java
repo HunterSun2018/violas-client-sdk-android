@@ -1,6 +1,8 @@
 package com.diem.types;
 
 
+import com.novi.serde.SerializationError;
+
 public final class AccessPath {
     public final AccountAddress address;
     public final com.novi.serde.Bytes path;
@@ -44,6 +46,19 @@ public final class AccessPath {
              throw new com.novi.serde.DeserializationError("Some input bytes were not read");
         }
         return value;
+    }
+
+    public enum Path {
+        ModuleId,
+        StructTag,
+    }
+
+    public static byte [] resourceAccessVec(StructTag tag) throws SerializationError {
+        com.novi.serde.Serializer serializer = new com.novi.bcs.BcsSerializer();
+        serializer.serialize_u8((byte) Path.StructTag.ordinal());
+        tag.serialize(serializer);
+
+        return serializer.get_bytes();
     }
 
     public boolean equals(Object obj) {

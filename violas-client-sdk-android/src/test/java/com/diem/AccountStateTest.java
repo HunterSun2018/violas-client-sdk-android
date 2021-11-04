@@ -1,12 +1,15 @@
 package com.diem;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import com.diem.jsonrpc.DiemJsonRpcClient;
 import com.diem.jsonrpc.JsonRpc;
+import com.diem.types.AccessPath;
 import com.diem.types.AccountAddress;
 import com.diem.types.AccountState;
 import com.diem.types.ChainId;
+import com.diem.types.EventKey;
 import com.diem.types.Identifier;
 import com.diem.types.StructTag;
 import com.diem.types.TypeTag;
@@ -27,6 +30,8 @@ public class AccountStateTest {
     public static class ExchangeRate implements AccountState.BcsObject {
         public long rate;
         public long timestamp;
+        public long eventCount;
+        public EventKey eventKey;
 
         public ExchangeRate() {
             rate = 1;
@@ -38,19 +43,6 @@ public class AccountStateTest {
             this.timestamp = 0;
         }
 
-        public static ExchangeRate deserialize(com.novi.serde.Deserializer deserializer) throws com.novi.serde.DeserializationError {
-            deserializer.increase_container_depth();
-            ExchangeRate exchangeRate = new ExchangeRate();
-
-            //byte[] bytes = deserializer.deserialize_bytes().content();
-            //exchangeRate.currency = new String(bytes, StandardCharsets.UTF_8);
-            long rate = deserializer.deserialize_u64();
-            long timestamp = deserializer.deserialize_u64();
-
-            deserializer.decrease_container_depth();
-            return new ExchangeRate(rate, timestamp);
-        }
-
         public void bcsDeserialize(byte[] input) throws com.novi.serde.DeserializationError {
             if (input == null) {
                 throw new com.novi.serde.DeserializationError("Cannot deserialize null array");
@@ -60,22 +52,13 @@ public class AccountStateTest {
 
             rate = deserializer.deserialize_u64();
             timestamp = deserializer.deserialize_u64();
+            eventCount =  deserializer.deserialize_u64();
+            eventKey = EventKey.deserialize(deserializer);
 
             if (deserializer.get_buffer_offset() < input.length) {
                 throw new com.novi.serde.DeserializationError("Some input bytes were not read");
             }
         }
-    }
-
-    TypeTag make_currency_type_tag_struct(String currency) {
-        final String rootAddress = "0000000000000000000000000A550C18";
-
-        return new TypeTag.Struct(
-                new StructTag(AccountAddress.valueOf(Hex.decode(rootAddress)),
-                        new Identifier(currency),
-                        new Identifier(currency),
-                        new ArrayList<>())
-        );
     }
 
     @Test
@@ -98,13 +81,15 @@ public class AccountStateTest {
                     new Identifier("Oracle"),
                     new Identifier("ExchangeRate"),
                     new ArrayList<TypeTag>() {
-                        { add(make_currency_type_tag_struct("USD")); }
+                        { add(Utils.make_currency_type_tag_struct("VBTC")); }
                     }
                     );
 
-            ExchangeRate exchangeRate = accountState.getResource(tag.bcsSerialize(), ExchangeRate.class);
+            ExchangeRate exchangeRate = accountState.getResource(tag, ExchangeRate.class);
 
-            System.console().printf("%d", exchangeRate.rate);
+            String result = String.format("%f", (double)exchangeRate.rate / 0x100000000l);
+
+            assertFalse(result.isEmpty());
 
         } catch (Exception e) {
             System.console().printf("%s", e.getMessage());

@@ -5,7 +5,10 @@ import com.novi.bcs.BcsDeserializer;
 import com.novi.serde.Bytes;
 import com.novi.serde.DeserializationError;
 import com.novi.serde.Deserializer;
+import com.novi.serde.SerializationError;
 import com.novi.serde.Tuple2;
+
+import org.graalvm.compiler.nodes.memory.Access;
 
 import java.lang.reflect.InvocationTargetException;
 import java.security.InvalidParameterException;
@@ -87,14 +90,15 @@ public class AccountState {
         public void bcsDeserialize(byte[] input) throws com.novi.serde.DeserializationError;
     }
 
-    public <T extends BcsObject> T getResource(byte[] path, Class<T> object)
-            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException, DeserializationError {
+    public <T extends BcsObject> T getResource(StructTag path, Class<T> object)
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException,
+            InstantiationException, DeserializationError, SerializationError {
 
-        byte[] value = mTree.get(path);
-        if(value == null)
+        byte[] value = mTree.get(AccessPath.resourceAccessVec(path));
+        if (value == null)
             throw new InvalidParameterException("The parameter path cannot be found.");
 
-        T t =  object.getDeclaredConstructor().newInstance();
+        T t = object.getDeclaredConstructor().newInstance();
 
         t.bcsDeserialize(value);
 

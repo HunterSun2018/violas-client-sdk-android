@@ -6,11 +6,17 @@ package com.diem;
 import com.diem.jsonrpc.JsonRpc;
 import com.diem.jsonrpc.StaleResponseException;
 import com.diem.stdlib.Helpers;
+import com.diem.types.AccountAddress;
+import com.diem.types.Identifier;
 import com.diem.types.RawTransaction;
 import com.diem.types.Script;
 import com.diem.types.SignedTransaction;
+import com.diem.types.StructTag;
 import com.diem.types.TransactionPayload;
+import com.diem.types.TypeTag;
+import com.diem.utils.Hex;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 public class Utils {
@@ -92,5 +98,16 @@ public class Utils {
             }
         }
         throw staleResponseException;
+    }
+
+    public static TypeTag make_currency_type_tag_struct(String currency) {
+        final String rootAddress = "00000000000000000000000000000001";
+
+        return new TypeTag.Struct(
+                new StructTag(AccountAddress.valueOf(Hex.decode(rootAddress)),
+                        new Identifier(currency),
+                        new Identifier(currency),
+                        new ArrayList<>())
+        );
     }
 }
