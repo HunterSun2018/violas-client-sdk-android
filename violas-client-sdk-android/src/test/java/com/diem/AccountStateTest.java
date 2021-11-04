@@ -52,7 +52,7 @@ public class AccountStateTest {
 
             rate = deserializer.deserialize_u64();
             timestamp = deserializer.deserialize_u64();
-            eventCount =  deserializer.deserialize_u64();
+            eventCount = deserializer.deserialize_u64();
             eventKey = EventKey.deserialize(deserializer);
 
             if (deserializer.get_buffer_offset() < input.length) {
@@ -76,18 +76,19 @@ public class AccountStateTest {
             Deserializer des = new BcsDeserializer(Hex.decode(blob));
             AccountState accountState = AccountState.deserialize(des);
 
-            //TypeTag.Struct
             StructTag tag = new StructTag(AccountAddress.valueOf(Hex.decode("00000000000000000000000000000001")),
                     new Identifier("Oracle"),
                     new Identifier("ExchangeRate"),
                     new ArrayList<TypeTag>() {
-                        { add(Utils.make_currency_type_tag_struct("VBTC")); }
+                        {
+                            add(Utils.make_currency_type_tag_struct("VBTC"));
+                        }
                     }
-                    );
+            );
 
             ExchangeRate exchangeRate = accountState.getResource(tag, ExchangeRate.class);
 
-            String result = String.format("%f", (double)exchangeRate.rate / 0x100000000l);
+            String result = String.format("%f", (double) exchangeRate.rate / 0x100000000l);
 
             assertFalse(result.isEmpty());
 
