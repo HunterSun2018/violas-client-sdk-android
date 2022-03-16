@@ -110,4 +110,13 @@ public class Utils {
                         new ArrayList<>())
         );
     }
+
+    public static TypeTag make_struct_type_tag(AccountAddress address, String moduleName, String resourceName) {
+        return new TypeTag.Struct(
+                new StructTag(address,
+                        new Identifier(moduleName),
+                        new Identifier(resourceName),
+                        new ArrayList<>())
+        );
+    }
 }

@@ -11,6 +11,7 @@ import com.novi.serde.Tuple2;
 import org.graalvm.compiler.nodes.memory.Access;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.security.InvalidParameterException;
 import java.util.Arrays;
 import java.util.Map;
@@ -98,9 +99,27 @@ public class AccountState {
         if (value == null)
             throw new InvalidParameterException("The parameter path cannot be found.");
 
+        //Method bcsDeserialize = object.getMethod("bcsDeserialize", new Class[]{byte[].class});
+        //T t1 = (T) bcsDeserialize.invoke(null, value);
+
         T t = object.getDeclaredConstructor().newInstance();
 
         t.bcsDeserialize(value);
+
+        return t;
+
+    }
+
+    public <T> T getResource2(StructTag path, Class<T> object)
+            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException,
+            InstantiationException, DeserializationError, SerializationError {
+
+        byte[] value = mTree.get(AccessPath.resourceAccessVec(path));
+        if (value == null)
+            throw new InvalidParameterException("The parameter path cannot be found.");
+
+        Method bcsDeserialize = object.getMethod("bcsDeserialize", byte[].class);
+        T t = (T) bcsDeserialize.invoke(null, value);
 
         return t;
 
