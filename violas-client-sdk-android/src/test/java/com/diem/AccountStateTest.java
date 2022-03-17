@@ -61,6 +61,31 @@ public class AccountStateTest {
         }
     }
 
+    public static class ExchangeRate2 {
+        public long rate;
+        public long timestamp;
+        public long eventCount;
+        public EventKey eventKey;
+
+        public static ExchangeRate2 bcsDeserialize(byte[] input) throws   com.novi.serde.DeserializationError {
+
+            ExchangeRate2 rate = new ExchangeRate2();
+
+            if (input == null) {
+                throw new com.novi.serde.DeserializationError("Cannot deserialize null array");
+            }
+
+            com.novi.serde.Deserializer deserializer = new com.novi.bcs.BcsDeserializer(input);
+
+            rate.rate = deserializer.deserialize_u64();
+            rate.timestamp = deserializer.deserialize_u64();
+            rate.eventCount = deserializer.deserialize_u64();
+            rate.eventKey = EventKey.deserialize(deserializer);
+
+            return  rate;
+        }
+    }
+
     @Test
     public void testDeserialize() throws Exception {
         List<ExchangeRate> rates = new ArrayList<>();
@@ -81,7 +106,7 @@ public class AccountStateTest {
                     new Identifier("ExchangeRate"),
                     new ArrayList<TypeTag>() {
                         {
-                            add(Utils.make_currency_type_tag_struct("VBTC"));
+                            add(Utils.make_currency_type_tag("BTC"));
                         }
                     }
             );
@@ -91,6 +116,9 @@ public class AccountStateTest {
             String result = String.format("%f", (double) exchangeRate.rate / 0x100000000l);
 
             assertFalse(result.isEmpty());
+
+            ExchangeRate2 rate = accountState.getResource2(tag, ExchangeRate2.class);
+            assertFalse(rate != null);
 
         } catch (Exception e) {
             System.console().printf("%s", e.getMessage());

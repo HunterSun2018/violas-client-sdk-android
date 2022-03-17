@@ -100,7 +100,7 @@ public class Utils {
         throw staleResponseException;
     }
 
-    public static TypeTag make_currency_type_tag_struct(String currency) {
+    public static TypeTag make_currency_type_tag(String currency) {
         final String rootAddress = "00000000000000000000000000000001";
 
         return new TypeTag.Struct(
