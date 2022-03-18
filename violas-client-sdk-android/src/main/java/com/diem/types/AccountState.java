@@ -110,6 +110,31 @@ public class AccountState {
 
     }
 
+    /**
+     *
+     * @param path  Resource path under account
+     * @param object    object must have static method ‘bcsDeserialize’，f example
+     *                  public static class T {
+     *                        public static T bcsDeserialize(byte[] input, Class<T> object) {
+     *                          com.novi.serde.Deserializer deserializer = new com.novi.bcs.BcsDeserializer(bytes);
+     *                          T t = new T();
+     *
+     *                          //deserializer
+     *
+     *                          return t;
+     *                        }
+     *
+     *                  }
+
+     * @param <T>    template class
+     * @return
+     * @throws NoSuchMethodException
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     * @throws InstantiationException
+     * @throws DeserializationError
+     * @throws SerializationError
+     */
     public <T> T getResource2(StructTag path, Class<T> object)
             throws NoSuchMethodException, IllegalAccessException, InvocationTargetException,
             InstantiationException, DeserializationError, SerializationError {
@@ -118,8 +143,12 @@ public class AccountState {
         if (value == null)
             throw new InvalidParameterException("The parameter path cannot be found.");
 
-        Method bcsDeserialize = object.getMethod("bcsDeserialize", byte[].class);
-        T t = (T) bcsDeserialize.invoke(null, value);
+        Method bcsDeserialize = object.getMethod("bcsDeserialize", byte[].class, Class.class);
+        if(bcsDeserialize==null) {
+            throw new RuntimeException(String.format("Class %s don't have static method 'bcsDeserialize'", object.getName()));
+        }
+
+        T t = (T) bcsDeserialize.invoke(null, value, object);
 
         return t;
 
